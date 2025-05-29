@@ -22,7 +22,7 @@ public class Request {
 	@JoinColumn(name="UserId", referencedColumnName="id", nullable=false)
 	private User user;
 	
-    @Column(nullable = true) //Are Nullable's necessary here, since it is already nullable in my database? Ask Sean.
+    @Column(nullable = true) 
     private String requestNumber;
 
     @Column(nullable = false) 
