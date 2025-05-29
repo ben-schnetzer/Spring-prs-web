@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "users") // Change d to match the correct table name
+@Table(name = "Users") // Change d to match the correct table name
 public class User {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)

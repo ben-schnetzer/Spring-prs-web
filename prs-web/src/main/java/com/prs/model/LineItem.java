@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 
@@ -11,15 +13,25 @@ public class LineItem {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
-    private int requestId;
-    private int productId;
+    //private int requestId;
+    
+	@ManyToOne
+	@JoinColumn(name="RequestId", referencedColumnName="id", nullable=false)
+	
+	private Request request;
+    //private int productId;
+    
+	@ManyToOne
+	@JoinColumn(name="ProductId", referencedColumnName="id", nullable=false)
+	private Product product;
+	
     private int quantity;
 
-    public LineItem(int id, int requestId, int productId, int quantity) {
+    public LineItem(int id, Request requestId, Product productId, int quantity) {
         super();
         this.id = id;
-        this.requestId = requestId;
-        this.productId = productId;
+        this.request = requestId;
+        this.product = productId;
         this.quantity = quantity;
     }
 
@@ -30,11 +42,11 @@ public class LineItem {
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public int getRequestId() { return requestId; }
-    public void setRequestId(int requestId) { this.requestId = requestId; }
+    public Request getRequest() { return request; }  // ✅ Fix getter name
+    public void setRequest(Request request) { this.request = request; }  // ✅ Fix setter name
 
-    public int getProductId() { return productId; }
-    public void setProductId(int productId) { this.productId = productId; }
+    public Product getProduct() { return product; }  // ✅ Fix getter name
+    public void setProduct(Product product) { this.product = product; }  // ✅ Fix setter name
 
     public int getQuantity() { return quantity; }
     public void setQuantity(int quantity) { this.quantity = quantity; }
@@ -43,6 +55,6 @@ public class LineItem {
 
     @Override
     public String toString() {
-        return "Product [id=" + id + ", requestId=" + requestId + ", productId=" + productId + ", quantity=" + quantity + "]";
+        return "Product [id=" + id + ", requestId=" + request + ", productId=" + product + ", quantity=" + quantity + "]";
     }
 }

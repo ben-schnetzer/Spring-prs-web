@@ -18,10 +18,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.prs.db.ProductRepo;
 import com.prs.model.Product;
+//import com.prs.model.Vendor;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/Products")
 
 public class ProductController {
 	
@@ -71,5 +72,15 @@ public class ProductController {
 	   throw new ResponseStatusException(
 	     HttpStatus.NOT_FOUND, "Product not found for id "+id);
 	  }
+	 }
+		@GetMapping("/by-vendor/{vendorId}")
+		public List<Product> getAllIdsForVendorId(@PathVariable int vendorId) {
+			return productRepo.findAllByVendor_Id(vendorId);
+			//Find all by VendorId
+			//"Find all" -> select
+			//from product
+			//"by" ->where
+			//"vendorId" -> vendorId
+			// = vendorId (parameter passed into method)
 	 }
 }

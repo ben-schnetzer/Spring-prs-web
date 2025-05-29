@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 
@@ -14,7 +16,12 @@ public class Request {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
-    private int userId;
+    //private int userId;
+    
+	@ManyToOne
+	@JoinColumn(name="UserId", referencedColumnName="id", nullable=false)
+	private User user;
+	
     private String requestNumber;
     private String description;
     private String justification;
@@ -25,11 +32,11 @@ public class Request {
     private Timestamp submittedDate;
     private String reasonForRejection;
 
-    public Request(int id, int userId, String requestNumber, String description, String justification, Date dateNeeded, 
+    public Request(int id, User userId, String requestNumber, String description, String justification, Date dateNeeded, 
                    String deliveryMode, String status, double total, Timestamp submittedDate, String reasonForRejection) {
         super();
         this.id = id;
-        this.userId = userId;
+        this.user = userId;
         this.requestNumber = requestNumber;
         this.description = description;
         this.justification = justification;
@@ -48,8 +55,8 @@ public class Request {
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
+    public User getUser() { return user; }   // ✅ Change to "getUser()"
+    public void setUser(User user) { this.user = user; }   // ✅ Change to "setUser(User user)"
 
     public String getRequestNumber() { return requestNumber; }
     public void setRequestNumber(String requestNumber) { this.requestNumber = requestNumber; }
@@ -80,7 +87,7 @@ public class Request {
 
     @Override
     public String toString() {
-        return "Request [id=" + id + ", userId=" + userId + ", requestNumber=" + requestNumber + ", description=" + description 
+        return "Request [id=" + id + ", userId=" + user + ", requestNumber=" + requestNumber + ", description=" + description 
                + ", justification=" + justification + ", dateNeeded=" + dateNeeded + ", deliveryMode=" + deliveryMode 
                + ", status=" + status + ", total=" + total + ", submittedDate=" + submittedDate 
                + ", reasonForRejection=" + reasonForRejection + "]";

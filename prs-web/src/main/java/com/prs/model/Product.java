@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 
@@ -11,17 +13,22 @@ public class Product {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
-    private int vendorId;
+    //private int vendorId;
+    
+	@ManyToOne
+	@JoinColumn(name="VendorId", referencedColumnName="id", nullable=false)
+	private Vendor vendor;
+    
     private String partNumber;
     private String name;
     private double price;
     private String unit;
     private String photoPath;
 
-    public Product(int id, int vendorId, String partNumber, String name, double price, String unit, String photoPath) {
+    public Product(int id, Vendor vendorId, String partNumber, String name, double price, String unit, String photoPath) {
         super();
         this.id = id;
-        this.vendorId = vendorId;
+        this.vendor = vendorId;
         this.partNumber = partNumber;
         this.name = name;
         this.price = price;
@@ -36,8 +43,8 @@ public class Product {
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public int getVendorId() { return vendorId; }
-    public void setVendorId(int vendorId) { this.vendorId = vendorId; }
+    public Vendor getVendor() { return vendor; }   // ✅ Correct getter name
+    public void setVendor(Vendor vendor) { this.vendor = vendor; }   // ✅ Correct setter name
 
     public String getPartNumber() { return partNumber; }
     public void setPartNumber(String partNumber) { this.partNumber = partNumber; }
@@ -56,7 +63,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product [id=" + id + ", vendorId=" + vendorId + ", partNumber=" + partNumber + ", name=" + name 
+        return "Product [id=" + id + ", vendorId=" + vendor + ", partNumber=" + partNumber + ", name=" + name 
                + ", price=" + price + ", unit=" + unit + ", photoPath=" + photoPath + "]";
     }
 }

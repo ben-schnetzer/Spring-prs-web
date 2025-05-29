@@ -21,7 +21,7 @@ import com.prs.model.Vendor;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/vendors")
+@RequestMapping("/api/Vendors")
 
 public class VendorController {
 	

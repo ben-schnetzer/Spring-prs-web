@@ -21,7 +21,7 @@ import com.prs.model.User;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/Users")
 
 public class UserController {
 	
@@ -43,10 +43,21 @@ public class UserController {
 		}
 	}
 	
-	@PostMapping("")
-		public User add(@RequestBody User user) {
-			return userRepo.save(user);
-		}
+	//TR1 TODO
+	//@PostMapping("/login")
+		//Description//Login
+		//Input//Body: Username: str, Password: str
+		
+		//Output-Success//Single instance of User
+
+		//Output-Other//NotFound(404)
+	
+	
+	//What is this? Should I delete and remake it above?
+	@PostMapping("/login")
+	public User add(@RequestBody User user) {
+		return userRepo.save(user);
+	}
 	
 	 @PutMapping("/{id}")
 	 public void update(@PathVariable int id, @RequestBody User user) {

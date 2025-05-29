@@ -18,10 +18,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.prs.db.LineItemRepo;
 import com.prs.model.LineItem;
+//import com.prs.model.Product;
+//import com.prs.model.Request;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api/lineitems")
+@RequestMapping("/api/LineItems")
 
 public class LineItemController {
 	
@@ -46,6 +48,7 @@ public class LineItemController {
 	@PostMapping("")
 		public LineItem add(@RequestBody LineItem product) {
 			return lineItemRepo.save(product);
+			//TODO: After LI Add, recalcTotal()
 		}
 	
 	 @PutMapping("/{id}")
@@ -60,6 +63,7 @@ public class LineItemController {
 	   throw new ResponseStatusException(
 	     HttpStatus.NOT_FOUND, "LineItem not found for id "+id);
 	  }
+	  //TODO: After LI Upd, recalcTotal()
 	 }
 	 
 	 @DeleteMapping("/{id}")
@@ -71,5 +75,34 @@ public class LineItemController {
 	   throw new ResponseStatusException(
 	     HttpStatus.NOT_FOUND, "LineItem not found for id "+id);
 	  }
+	  //TODO: After LI Del, recalcTotal()
 	 }
+		@GetMapping("/by-product/{productId}")
+		public List<LineItem> getAllIdsForProductId(@PathVariable int productId) {
+			return lineItemRepo.findAllByProduct_Id(productId);
+			//Find all by ProductId
+			//"Find all" -> select
+			//from lineItem
+			//"by" ->where
+			//"productId" -> productId
+			// = productId (parameter passed into method)
+	 }
+		@GetMapping("/by-request/{requestId}")
+		public List<LineItem> getAllIdsForRequestId(@PathVariable int requestId) {
+			return lineItemRepo.findAllByRequest_Id(requestId);
+			//Find all by RequestId
+			//"Find all" -> select
+			//from lineItem
+			//"by" ->where
+			//"requestId" -> requestId
+			// = requestId (parameter passed into method)
+	 }
+		
+		//TR4 TODO
+		//@GetMapping("/lines-for-req/{requestId}")
+			//Description//Get LineItems for Request
+			//Input//Body: requestId:int
+			//Output-Success//List of LineItems
+
+			//Output-Other//?
 }
