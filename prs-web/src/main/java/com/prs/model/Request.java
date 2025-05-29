@@ -1,8 +1,8 @@
 package com.prs.model;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,27 +16,44 @@ public class Request {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
-    //private int userId;
+    
     
 	@ManyToOne
 	@JoinColumn(name="UserId", referencedColumnName="id", nullable=false)
 	private User user;
 	
+    @Column(nullable = true)  // requestNumber can be null
     private String requestNumber;
+
+    @Column(nullable = false) // description is required
     private String description;
+
+    @Column(nullable = false) // justification is required
     private String justification;
+
+    @Column(nullable = false) // dateNeeded is required
     private Date dateNeeded;
+
+    @Column(nullable = false) // deliveryMode is required
     private String deliveryMode;
+
+    @Column(nullable = true)  // status can be null
     private String status;
-    private double total;
-    private Timestamp submittedDate;
+
+    @Column(nullable = true)  // total can be null
+    private Double total;
+
+    @Column(nullable = true)  // submittedDate can be null
+    private Date submittedDate;
+
+    @Column(nullable = true)  // reasonForRejection can be null
     private String reasonForRejection;
 
-    public Request(int id, User userId, String requestNumber, String description, String justification, Date dateNeeded, 
-                   String deliveryMode, String status, double total, Timestamp submittedDate, String reasonForRejection) {
+    public Request(int id, User user, String requestNumber, String description, String justification, Date dateNeeded, 
+                   String deliveryMode, String status, Double total, Date submittedDate, String reasonForRejection) {
         super();
         this.id = id;
-        this.user = userId;
+        this.user = user;
         this.requestNumber = requestNumber;
         this.description = description;
         this.justification = justification;
@@ -76,11 +93,11 @@ public class Request {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    public double getTotal() { return total; }
+    public Double getTotal() { return total; }
     public void setTotal(double total) { this.total = total; }
 
-    public Timestamp getSubmittedDate() { return submittedDate; }
-    public void setSubmittedDate(Timestamp submittedDate) { this.submittedDate = submittedDate; }
+    public Date getSubmittedDate() { return submittedDate; }
+    public void setSubmittedDate(Date submittedDate) { this.submittedDate = submittedDate; }
 
     public String getReasonForRejection() { return reasonForRejection; }
     public void setReasonForRejection(String reasonForRejection) { this.reasonForRejection = reasonForRejection; }

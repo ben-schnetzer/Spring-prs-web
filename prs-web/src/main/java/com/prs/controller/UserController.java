@@ -43,18 +43,24 @@ public class UserController {
 		}
 	}
 	
-	//TR1 TODO
-	//@PostMapping("/login")
-		//Description//Login
-		//Input//Body: Username: str, Password: str
-		
-		//Output-Success//Single instance of User
 
 		//Output-Other//NotFound(404)
-	
-	
-	//What is this? Should I delete and remake it above?
 	@PostMapping("/login")
+	public User login(@RequestBody User user) {
+		//Description//Login
+	    Optional<User> userOptional = userRepo.findByUsername(user.getUsername());
+
+	    if (userOptional.isPresent() && userOptional.get().getPassword().equals(user.getPassword())) {
+	        return userOptional.get();
+	    }
+		//Output-Success//Single instance of User
+	    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+	}
+
+	
+	
+	
+	@PostMapping("")
 	public User add(@RequestBody User user) {
 		return userRepo.save(user);
 	}

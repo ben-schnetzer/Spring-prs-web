@@ -1,6 +1,9 @@
 package com.prs.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ public class RequestController {
 	
 	@Autowired
 	private RequestRepo requestRepo;
+
 	
 	@GetMapping("/")
 	public List<Request> getAll() {
@@ -50,13 +54,20 @@ public class RequestController {
 	}
 	
 	@PostMapping("")
-		public Request add(@RequestBody Request request) {
-		log.info("Received Request: {}", request.getUser());
-			return requestRepo.save(request);
-			//Front End passes UserId, Desc., Just., DateNeeded, and DlvMode. Rest of fields are managed by Back end
-		}
+	public Request add(@RequestBody Request request) {
+	log.info("Received Request: {}", request.getUser());
+	 // Generate the request number dynamically
+    String requestNumber = generateRequestNumber();
+    request.setRequestNumber(requestNumber);
+    request.setStatus("NEW");
+    request.setTotal(0.0); // Ensure it's a Double, not a primitive `double`
+    request.setSubmittedDate(new java.sql.Date(System.currentTimeMillis()));
 	
-	//TR6 TODO
+		return requestRepo.save(request);
+		//Front End passes UserId, Desc., Just., DateNeeded, and DlvMode. Rest of fields are managed by Back end
+	}
+	
+	//TR6
 	//@PutMapping("/submit-review/{id}")
 		//Description//Submit Request for review
 		//Input//Body: id:int
@@ -67,8 +78,26 @@ public class RequestController {
 	
 	//If total is <= $50, set request status to 'APPROVED', else set to 'REVIEW' 
 			//Change submittedDate to current date
-	
-	//TR7 TODO
+	@PutMapping("/submit-review/{id}")
+	public Request submitReview(@PathVariable int id) {
+	    Optional<Request> request = requestRepo.findById(id);
+	    if (request.isEmpty()) {
+	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found for id: " + id);
+	    }
+
+	    Request r = request.get();
+	    r.setSubmittedDate(new java.sql.Date(System.currentTimeMillis())); // ✅ Fixing the Date type issue
+
+	    if (r.getTotal() != null && r.getTotal() <= 50) {
+	        r.setStatus("APPROVED");
+	    } else {
+	        r.setStatus("REVIEW");
+	    }
+
+	    return requestRepo.save(r);
+	}
+	 
+	//TR7
 	//@GetMapping("/list-review/{userId}")
 		//Description//Get Requests ready for review
 		//Input//Body: userId:int
@@ -78,8 +107,15 @@ public class RequestController {
 		//Output-Other//?
 	
 	//Get requests in REVIEW status and req.userId != to userId
-	
-	//TR11 TODO
+	@GetMapping("/list-review/{userId}")
+	public List<Request> listReview(@PathVariable int userId) {
+	    return requestRepo.findAllByStatus("REVIEW") // Fetch all REVIEW requests first
+	                      .stream()
+	                      .filter(req -> req.getUser().getId() != userId) // Ensure it does NOT belong to the given user
+	                      .toList();
+	}
+	  
+	//TR11
 	//@PutMapping("/approve/{id}")
 	//Description//Approve Request
 	//Input//Body: id:int
@@ -87,8 +123,21 @@ public class RequestController {
 	//Output-Success//Single Instance of Request
 	
 	//Get the request for id, set status to APPROVED, and then save request.
-	
-	//TR12 TODO
+	  
+	  @PutMapping("/approve/{id}")
+	    public Request approveRequest(@PathVariable int id) {
+	        Optional<Request> request = requestRepo.findById(id);
+	        if (request.isEmpty()) {
+	            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found for id: " + id);
+	        }
+
+	        Request r = request.get();
+	        r.setStatus("APPROVED");
+
+	        return requestRepo.save(r);
+	    }
+	  
+	//TR12
 	//@PutMapping("/reject/{id}")
 	//Description//Reject Request
 	//Input//Body: id:int, reason: str [from body]
@@ -96,7 +145,19 @@ public class RequestController {
 	//Output-Success//NoContent(204)
 	
 	//Get the request for id, set status to REJECTED, set the reasonForRejection t- reason, and then save request.
-	
+	  @PutMapping("/reject/{id}")
+	    public void rejectRequest(@PathVariable int id, @RequestBody Map<String, String> body) {
+	        Optional<Request> request = requestRepo.findById(id);
+	        if (request.isEmpty()) {
+	            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Request not found for id: " + id);
+	        }
+
+	        Request r = request.get();
+	        r.setStatus("REJECTED");
+	        r.setReasonForRejection(body.get("reasonForRejection"));
+	        requestRepo.save(r);
+	    }
+	  
 	 @PutMapping("/{id}")
 	 public void update(@PathVariable int id, @RequestBody Request request) {
 	  if (id != request.getId()) {
@@ -121,6 +182,30 @@ public class RequestController {
 	     HttpStatus.NOT_FOUND, "Request not found for id "+id);
 	  }
 	  }
+	 
+	 private String generateRequestNumber() {
+		    // Get current date in YYMMDD format
+		    SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd");
+		    String datePart = dateFormat.format(new Date());
+
+		    // Retrieve latest request number from database
+		    Request lastRequest = requestRepo.findTopByOrderByIdDesc(); // Assuming ID increments sequentially
+
+		    int nextNumber = 1; // Default if no previous requests exist
+
+		    if (lastRequest != null && lastRequest.getRequestNumber() != null) {
+		        String lastRequestNumber = lastRequest.getRequestNumber();
+
+		        // Ensure request number has at least 7 characters before extracting
+		        if (lastRequestNumber.length() >= 7) {
+		            String lastNumber = lastRequestNumber.substring(7); // Extract last four digits
+		            nextNumber = Integer.parseInt(lastNumber) + 1; // Increment
+		        }
+		    }
+
+		    // Format request number as "RYYMMDD####"
+		    return "R" + datePart + String.format("%04d", nextNumber);
+		}
 	  
 		@GetMapping("/by-user/{userId}")
 		public List<Request> getAllIdsForUserId(@PathVariable int userId) {
