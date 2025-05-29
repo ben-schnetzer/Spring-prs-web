@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.prs.db.RequestRepo;
 import com.prs.model.Request;
-//import com.prs.model.User;
+
 
 @CrossOrigin
 @RestController
@@ -32,7 +32,7 @@ import com.prs.model.Request;
 
 public class RequestController {
 	
-	private static final Logger log = LoggerFactory.getLogger(RequestController.class); // ✅ Add this
+	private static final Logger log = LoggerFactory.getLogger(RequestController.class); 
 	
 	@Autowired
 	private RequestRepo requestRepo;
@@ -56,11 +56,10 @@ public class RequestController {
 	@PostMapping("")
 	public Request add(@RequestBody Request request) {
 	log.info("Received Request: {}", request.getUser());
-	 // Generate the request number dynamically
     String requestNumber = generateRequestNumber();
     request.setRequestNumber(requestNumber);
     request.setStatus("NEW");
-    request.setTotal(0.0); // Ensure it's a Double, not a primitive `double`
+    request.setTotal(0.0); 
     request.setSubmittedDate(new java.sql.Date(System.currentTimeMillis()));
 	
 		return requestRepo.save(request);
@@ -68,16 +67,6 @@ public class RequestController {
 	}
 	
 	//TR6
-	//@PutMapping("/submit-review/{id}")
-		//Description//Submit Request for review
-		//Input//Body: id:int
-		
-		//Output-Success//Single instance of Request
-
-		//Output-Other//?
-	
-	//If total is <= $50, set request status to 'APPROVED', else set to 'REVIEW' 
-			//Change submittedDate to current date
 	@PutMapping("/submit-review/{id}")
 	public Request submitReview(@PathVariable int id) {
 	    Optional<Request> request = requestRepo.findById(id);
@@ -96,17 +85,10 @@ public class RequestController {
 
 	    return requestRepo.save(r);
 	}
+	//If total is <= $50, set request status to 'APPROVED', else set to 'REVIEW' 
+	//Change submittedDate to current date
 	 
 	//TR7
-	//@GetMapping("/list-review/{userId}")
-		//Description//Get Requests ready for review
-		//Input//Body: userId:int
-		
-		//Output-Success//List of Requests
-
-		//Output-Other//?
-	
-	//Get requests in REVIEW status and req.userId != to userId
 	@GetMapping("/list-review/{userId}")
 	public List<Request> listReview(@PathVariable int userId) {
 	    return requestRepo.findAllByStatus("REVIEW") // Fetch all REVIEW requests first
@@ -114,16 +96,9 @@ public class RequestController {
 	                      .filter(req -> req.getUser().getId() != userId) // Ensure it does NOT belong to the given user
 	                      .toList();
 	}
+	//Get requests in REVIEW status and req.userId != to userId
 	  
 	//TR11
-	//@PutMapping("/approve/{id}")
-	//Description//Approve Request
-	//Input//Body: id:int
-	
-	//Output-Success//Single Instance of Request
-	
-	//Get the request for id, set status to APPROVED, and then save request.
-	  
 	  @PutMapping("/approve/{id}")
 	    public Request approveRequest(@PathVariable int id) {
 	        Optional<Request> request = requestRepo.findById(id);
@@ -136,15 +111,9 @@ public class RequestController {
 
 	        return requestRepo.save(r);
 	    }
+		//Get the request for id, set status to APPROVED, and then save request.
 	  
 	//TR12
-	//@PutMapping("/reject/{id}")
-	//Description//Reject Request
-	//Input//Body: id:int, reason: str [from body]
-	
-	//Output-Success//NoContent(204)
-	
-	//Get the request for id, set status to REJECTED, set the reasonForRejection t- reason, and then save request.
 	  @PutMapping("/reject/{id}")
 	    public void rejectRequest(@PathVariable int id, @RequestBody Map<String, String> body) {
 	        Optional<Request> request = requestRepo.findById(id);
@@ -157,6 +126,7 @@ public class RequestController {
 	        r.setReasonForRejection(body.get("reasonForRejection"));
 	        requestRepo.save(r);
 	    }
+	//Get the request for id, set status to REJECTED, set the reasonForRejection t- reason, and then save request.
 	  
 	 @PutMapping("/{id}")
 	 public void update(@PathVariable int id, @RequestBody Request request) {
@@ -188,22 +158,22 @@ public class RequestController {
 		    SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd");
 		    String datePart = dateFormat.format(new Date());
 
-		    // Retrieve latest request number from database
-		    Request lastRequest = requestRepo.findTopByOrderByIdDesc(); // Assuming ID increments sequentially
+		    
+		    Request lastRequest = requestRepo.findTopByOrderByIdDesc(); 
 
-		    int nextNumber = 1; // Default if no previous requests exist
+		    int nextNumber = 1; 
 
 		    if (lastRequest != null && lastRequest.getRequestNumber() != null) {
 		        String lastRequestNumber = lastRequest.getRequestNumber();
 
-		        // Ensure request number has at least 7 characters before extracting
+		      
 		        if (lastRequestNumber.length() >= 7) {
-		            String lastNumber = lastRequestNumber.substring(7); // Extract last four digits
-		            nextNumber = Integer.parseInt(lastNumber) + 1; // Increment
+		            String lastNumber = lastRequestNumber.substring(7); 
+		            nextNumber = Integer.parseInt(lastNumber) + 1; 
 		        }
 		    }
 
-		    // Format request number as "RYYMMDD####"
+		 
 		    return "R" + datePart + String.format("%04d", nextNumber);
 		}
 	  

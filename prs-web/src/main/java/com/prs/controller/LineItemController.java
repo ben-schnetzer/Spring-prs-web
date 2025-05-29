@@ -56,7 +56,7 @@ public class LineItemController {
 
 	    LineItem savedLineItem = lineItemRepo.save(lineItem);
 	    
-	    // ✅ Explicitly re-fetch request before recalculating total
+	   
 	    recalcTotal(savedLineItem.getRequest().getId());
 
 	    return savedLineItem;
@@ -68,7 +68,7 @@ public class LineItemController {
 	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "LineItem id mismatch vs URL.");
 	    } else if (lineItemRepo.existsById(lineItem.getId())) {
 	        lineItemRepo.save(lineItem);
-	        recalcTotal(lineItem.getRequest().getId()); // ✅ Update total after updating
+	        recalcTotal(lineItem.getRequest().getId()); 
 	    } else {
 	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem not found for id " + id);
 	    }
@@ -80,7 +80,7 @@ public class LineItemController {
 	    if (lineItemOpt.isPresent()) {
 	        LineItem lineItem = lineItemOpt.get();
 	        lineItemRepo.deleteById(id);
-	        recalcTotal(lineItem.getRequest().getId()); // ✅ Update total after deleting
+	        recalcTotal(lineItem.getRequest().getId()); 
 	    } else {
 	        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "LineItem not found for id " + id);
 	    }
@@ -118,11 +118,11 @@ public class LineItemController {
 		    Request request = requestOpt.get();
 		    Double newTotal = lineItemRepo.findByRequest_Id(requestId) // Get all LineItems for this request
 		                                  .stream()
-		                                  .mapToDouble(li -> li.getProduct().getPrice() * li.getQuantity()) // ✅ Correctly multiplies price by quantity
+		                                  .mapToDouble(li -> li.getProduct().getPrice() * li.getQuantity()) 
 		                                  .sum();
 
 		    request.setTotal(newTotal);
-		    requestRepo.save(request); // ✅ Save updated Request total
+		    requestRepo.save(request); 
 			}
 		}
 }

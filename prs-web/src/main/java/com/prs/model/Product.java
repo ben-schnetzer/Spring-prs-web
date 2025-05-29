@@ -13,7 +13,7 @@ public class Product {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
-    //private int vendorId;
+  
     
 	@ManyToOne
 	@JoinColumn(name="VendorId", referencedColumnName="id", nullable=false)
@@ -43,8 +43,8 @@ public class Product {
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public Vendor getVendor() { return vendor; }   // ✅ Correct getter name
-    public void setVendor(Vendor vendor) { this.vendor = vendor; }   // ✅ Correct setter name
+    public Vendor getVendor() { return vendor; }  
+    public void setVendor(Vendor vendor) { this.vendor = vendor; }   
 
     public String getPartNumber() { return partNumber; }
     public void setPartNumber(String partNumber) { this.partNumber = partNumber; }

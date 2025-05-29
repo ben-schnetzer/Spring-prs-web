@@ -22,31 +22,31 @@ public class Request {
 	@JoinColumn(name="UserId", referencedColumnName="id", nullable=false)
 	private User user;
 	
-    @Column(nullable = true)  // requestNumber can be null
+    @Column(nullable = true) //Are Nullable's necessary here, since it is already nullable in my database? Ask Sean.
     private String requestNumber;
 
-    @Column(nullable = false) // description is required
+    @Column(nullable = false) 
     private String description;
 
-    @Column(nullable = false) // justification is required
+    @Column(nullable = false)
     private String justification;
 
-    @Column(nullable = false) // dateNeeded is required
+    @Column(nullable = false) 
     private Date dateNeeded;
 
-    @Column(nullable = false) // deliveryMode is required
+    @Column(nullable = false)
     private String deliveryMode;
 
-    @Column(nullable = true)  // status can be null
+    @Column(nullable = true) 
     private String status;
 
-    @Column(nullable = true)  // total can be null
+    @Column(nullable = true) 
     private Double total;
 
-    @Column(nullable = true)  // submittedDate can be null
+    @Column(nullable = true) 
     private Date submittedDate;
 
-    @Column(nullable = true)  // reasonForRejection can be null
+    @Column(nullable = true) 
     private String reasonForRejection;
 
     public Request(int id, User user, String requestNumber, String description, String justification, Date dateNeeded, 
@@ -72,8 +72,8 @@ public class Request {
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public User getUser() { return user; }   // ✅ Change to "getUser()"
-    public void setUser(User user) { this.user = user; }   // ✅ Change to "setUser(User user)"
+    public User getUser() { return user; }   
+    public void setUser(User user) { this.user = user; }  
 
     public String getRequestNumber() { return requestNumber; }
     public void setRequestNumber(String requestNumber) { this.requestNumber = requestNumber; }
